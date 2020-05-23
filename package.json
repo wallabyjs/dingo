@@ -2,7 +2,7 @@
   "name": "dingo-vscode",
   "displayName": "dingo-vscode",
   "description": "Allows you to download and open a git repository directly from VS Code",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Wallaby.js",
   "homepage": "https://github.com/wallabyjs/dingo/",
   "bugs": {
