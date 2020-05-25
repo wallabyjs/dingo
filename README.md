@@ -10,6 +10,8 @@ The following repository locations/formats are supported:
 - Git HTTP endpoint (e.g. `https://github.com/lodash/lodash.git`)
 - Git SSH endpoint (e.g. `git@github.com:lodash/lodash.git`)
 
+![Dingo in action](demo.gif)
+
 ## Using
 
 To use the extension, simply run the command `Dingo: Open`.
