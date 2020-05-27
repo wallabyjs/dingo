@@ -4,7 +4,7 @@
   "description": "Allows you to download and open a git repository directly from VS Code",
   "version": "1.0.3",
   "author": "Wallaby.js",
-  "homepage": "https://github.com/wallabyjs/dingo/",
+  "homepage": "https://wallabyjs.com/dingo/",
   "bugs": {
     "url": "https://github.com/wallabyjs/dingo/issues"
   },
