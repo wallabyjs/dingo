@@ -33,11 +33,12 @@ function getVersionsFromTags(tags: Commit[]): Commit[] {
       return { major, minor, revision, ...item };
     })
     .filter((item) => item.major !== undefined && item.minor !== undefined && item.revision !== undefined)
+    .filter((item) => (item.major as any == parseInt(item.major.replace('v', ''))) && 
+                      (item.minor as any == parseInt(item.minor)))
     .map((item) => ({
       ...item,
       major: parseInt(item.major.replace('v', '')),
       minor: parseInt(item.minor),
-      revision: parseInt(item.revision),
     }))
     .sort((a, b) => {
       if (a.major !== b.major) {
@@ -45,7 +46,8 @@ function getVersionsFromTags(tags: Commit[]): Commit[] {
       } else if (a.minor !== b.minor) {
         return b.minor - a.minor;
       } else if (a.revision !== b.revision) {
-        return b.revision - a.revision;
+        // attempt to treat revision as a number. Accept that will return 0 if can't convert
+        return parseInt(b.revision.replace('-', '')) - parseInt(a.revision.replace('-', ''));
       }
       return 0;
     })
