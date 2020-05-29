@@ -25,7 +25,7 @@ Dingo is licensed under an [MIT license](LICENSE).
 
 ## About
 
-Dingo is brought to you with ❤️love❤️ by the Wallaby.js team. While working on our 
+Dingo is brought to you with ❤️ love ❤️ by the Wallaby.js team. While working on our 
 [Wallaby.js](https://wallabyjs.com/) and [Quokka.js](https://quokkajs.com/) products, 
 time after time we found ourselves performing the same steps: find repo for npm package, 
 clone repo, install dependencies, and then open in new instance of VS Code. We created 
