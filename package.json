@@ -1,7 +1,7 @@
 {
   "name": "dingo-vscode",
   "displayName": "Dingo",
-  "description": "Allows you to download and open a git repository directly from VS Code",
+  "description": "Allows you to download and open a Git repository directly from VS Code",
   "version": "1.0.5",
   "author": "Wallaby.js",
   "homepage": "https://wallabyjs.com/dingo/",
@@ -46,7 +46,7 @@
           "default": ""
         },
         "dingo.npmPath": {
-          "description": "Explicitly set NPM path for installing packages.",
+          "description": "Explicitly set npm path for installing packages.",
           "type": "string",
           "default": ""
         },
