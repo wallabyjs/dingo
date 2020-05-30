@@ -33,11 +33,11 @@ function getVersionsFromTags(tags: Commit[]): Commit[] {
       return { major: major.replace('v', ''), minor, revision, ...item };
     })
     .filter((item) => item.major !== undefined && item.minor !== undefined && item.revision !== undefined)
-    .filter((item) => (item.major as any == parseInt(item.major.replace('v', ''))) && 
+    .filter((item) => (item.major as any == parseInt(item.major)) && 
                       (item.minor as any == parseInt(item.minor)))
     .map((item) => ({
       ...item,
-      major: parseInt(item.major.replace('v', '')),
+      major: parseInt(item.major),
       minor: parseInt(item.minor),
     }))
     .sort((a, b) => {
