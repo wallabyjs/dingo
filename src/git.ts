@@ -69,9 +69,17 @@ export function download(gitPath: string, commit: Commit, directory: string): Ca
         await waitingPromise;
         if (cancelled) reject(new Error('Cancelled'));
 
-        waitingPromise = executeCommand(`${gitCommand} checkout master`, { cwd: directory });
-        await waitingPromise;
-        if (cancelled) reject(new Error('Cancelled'));
+        try {
+          waitingPromise = executeCommand(`${gitCommand} checkout master`, { cwd: directory });
+          await waitingPromise;
+          if (cancelled) reject(new Error('Cancelled'));
+        } catch (e) {
+          const branchesOrTags = await getBranchesOrTags(gitPath, commit.repoUrl, "Branches");
+          if (cancelled) reject(new Error('Cancelled'));  
+          if (branchesOrTags.length !== 0) {
+            throw e;
+          }
+        }
       } else {
         waitingPromise = executeCommand(`${gitCommand} fetch --depth 1 origin ` + commit.id!, { cwd: directory });
         await waitingPromise;
