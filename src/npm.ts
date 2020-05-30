@@ -30,7 +30,7 @@ function getVersionsFromTags(tags: Commit[]): Commit[] {
     .filter((item) => item.parts.length === 3)
     .map((item) => {
       const [major, minor, revision] = item.parts;
-      return { major, minor, revision, ...item };
+      return { major: major.replace('v', ''), minor, revision, ...item };
     })
     .filter((item) => item.major !== undefined && item.minor !== undefined && item.revision !== undefined)
     .filter((item) => (item.major as any == parseInt(item.major.replace('v', ''))) && 
