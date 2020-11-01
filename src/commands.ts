@@ -48,7 +48,7 @@ function determineSourceType(input: string | undefined): SourceType {
 }
 
 enum BranchCommit {
-  MasterHead,
+  Default,
   Tag,
   Branch,
 }
@@ -60,8 +60,8 @@ interface BranchCommitQuickPickItem extends vscode.QuickPickItem {
 async function selectBranchAndCommit(repoUrl: string): Promise<Commit | undefined> {
   const selectedItem = await vscode.window.showQuickPick<BranchCommitQuickPickItem>([
     {
-      label: 'master',
-      type: BranchCommit.MasterHead,
+      label: 'default branch (e.g. main / master)',
+      type: BranchCommit.Default,
     },
     {
       label: 'select tag',
@@ -78,7 +78,7 @@ async function selectBranchAndCommit(repoUrl: string): Promise<Commit | undefine
   }
 
   switch (selectedItem.type) {
-    case BranchCommit.MasterHead:
+    case BranchCommit.Default:
       return {
         label: '',
         repoUrl,

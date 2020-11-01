@@ -70,13 +70,34 @@ export function download(gitPath: string, commit: Commit, directory: string): Ca
         if (cancelled) reject(new Error('Cancelled'));
 
         try {
-          waitingPromise = executeCommand(`${gitCommand} checkout master`, { cwd: directory });
-          await waitingPromise;
-          if (cancelled) reject(new Error('Cancelled'));
+          try {
+            // Try master first
+            waitingPromise = executeCommand(`${gitCommand} checkout master`, { cwd: directory });
+            await waitingPromise;
+            if (cancelled) reject(new Error('Cancelled'));  
+          } catch (e) {
+            // If no master branch, try main
+            waitingPromise = executeCommand(`${gitCommand} checkout main`, { cwd: directory });
+            await waitingPromise;
+            if (cancelled) reject(new Error('Cancelled'));
+          }
         } catch (e) {
           const branchesOrTags = await getBranchesOrTags(gitPath, commit.repoUrl, "Branches");
-          if (cancelled) reject(new Error('Cancelled'));  
-          if (branchesOrTags.length !== 0) {
+          if (cancelled) reject(new Error('Cancelled'));
+          if (branchesOrTags.length === 0) {
+            throw new Error('No branches found in repository');
+          } else if (branchesOrTags.length === 1) {
+            // If only 1 branch, get and use that
+            const singleBranchCommit = branchesOrTags[0];
+            
+            waitingPromise = executeCommand(`${gitCommand} fetch --depth 1 origin ` + singleBranchCommit.id!, { cwd: directory });
+            await waitingPromise;
+            if (cancelled) reject(new Error('Cancelled'));
+
+            waitingPromise = executeCommand(`${gitCommand} checkout ${singleBranchCommit.id!}`, { cwd: directory });
+            await waitingPromise;
+            if (cancelled) reject(new Error('Cancelled'));
+          } else {
             throw e;
           }
         }
