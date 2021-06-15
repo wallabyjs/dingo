@@ -2,6 +2,9 @@
 
 All notable changes to the "dingo-vscode" extension will be documented in this file.
 
+## 1.0.9
+- Update dependencies
+
 ## 1.0.8
 - Update download function to better support repos that do not have a `master` branch. Fixes [#6](https://github.com/wallabyjs/dingo/issues/6)
 
