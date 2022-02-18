@@ -2,6 +2,9 @@
 
 All notable changes to the "dingo-vscode" extension will be documented in this file.
 
+## 1.0.10
+- Update dependencies
+
 ## 1.0.9
 - Update dependencies
 

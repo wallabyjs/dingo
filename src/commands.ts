@@ -23,9 +23,9 @@ interface DingoSettings {
 }
 
 enum SourceType {
-  GitRepo,
-  NpmPackage,
-  NotSupported,
+  gitRepo,
+  npmPackage,
+  notSupported,
 }
 
 function determineSourceType(input: string | undefined): SourceType {
@@ -35,22 +35,22 @@ function determineSourceType(input: string | undefined): SourceType {
     }
 
     if (input.trim().endsWith('.git')) {
-      return SourceType.GitRepo;
+      return SourceType.gitRepo;
     }
 
     const packageNameValidationResult = validateNpmPackageName(input);
     if (packageNameValidationResult.validForNewPackages || packageNameValidationResult.validForOldPackages) {
-      return SourceType.NpmPackage;
+      return SourceType.npmPackage;
     }
   }
 
-  return SourceType.NotSupported;
+  return SourceType.notSupported;
 }
 
 enum BranchCommit {
-  Default,
-  Tag,
-  Branch,
+  default,
+  tag,
+  branch,
 }
 
 interface BranchCommitQuickPickItem extends vscode.QuickPickItem {
@@ -61,15 +61,15 @@ async function selectBranchAndCommit(repoUrl: string): Promise<Commit | undefine
   const selectedItem = await vscode.window.showQuickPick<BranchCommitQuickPickItem>([
     {
       label: 'default branch (e.g. main / master)',
-      type: BranchCommit.Default,
+      type: BranchCommit.default,
     },
     {
       label: 'select tag',
-      type: BranchCommit.Tag,
+      type: BranchCommit.tag,
     },
     {
       label: 'select different branch',
-      type: BranchCommit.Branch,
+      type: BranchCommit.branch,
     },
   ]);
 
@@ -78,17 +78,17 @@ async function selectBranchAndCommit(repoUrl: string): Promise<Commit | undefine
   }
 
   switch (selectedItem.type) {
-    case BranchCommit.Default:
+    case BranchCommit.default:
       return {
         label: '',
         repoUrl,
         directory: '',
       };
 
-    case BranchCommit.Tag:
+    case BranchCommit.tag:
       return await selectBranchOrTag(repoUrl, 'Tags');
 
-    case BranchCommit.Branch:
+    case BranchCommit.branch:
       return await selectBranchOrTag(repoUrl, 'Branches');
 
     default:
@@ -169,7 +169,7 @@ async function getDirectoryToDownloadTo(root: string, repoUrl: string): Promise<
     } else if (directoryOption.new) {
       let i = 1;
       do {
-        i++
+        i++;
       } while (fs.existsSync(directory + '-' + i.toString()));
       return directory + '-' + i.toString();
     }
@@ -245,7 +245,7 @@ async function showQuickPick(input: string, loadedValue: string, busyPlaceholder
           quickPick.busy = false;
         }
       }
-    } catch (e) {
+    } catch (e:any) {
       quickPick.hide();
       if (e.message) {
         openHandler(input, e.message);
@@ -289,11 +289,11 @@ async function selectPackageVersionCommit(packageName: string): Promise<Commit |
 
 async function openDialogToGetCommitDetails(value: string, sourceType: SourceType): Promise<Commit | undefined> {
   switch (sourceType) {
-    case SourceType.GitRepo:
+    case SourceType.gitRepo:
       return await selectBranchAndCommit(value);
       break;
 
-    case SourceType.NpmPackage:
+    case SourceType.npmPackage:
       return await selectPackageVersionCommit(value);
       break;
   }
@@ -341,7 +341,7 @@ async function downloadRepository(inputValue: string, commit: Commit) {
         }
       });
 
-      return new Promise(async (resolve) => {
+      return new Promise<void>(async (resolve) => {
         progress.report({ message: 'Downloading...' });
         try {
           waitingPromise = download(settings.gitPath, commit, directoryName);
@@ -360,7 +360,7 @@ async function downloadRepository(inputValue: string, commit: Commit) {
               vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(commit!.directory ? path.join(directoryName, commit!.directory) : directoryName), true);
             }
           }
-        } catch (e) {
+        } catch (e:any) {
           if (!cancelled) {
             const timeSinceProgressStarted = new Date().getTime() - progressStartTime;
             if (timeSinceProgressStarted < 2500) {
@@ -391,7 +391,7 @@ export async function openHandler(value: string, errorMessage?: string) {
   }
 
   input.onDidChangeValue((value) => {
-    if (value && determineSourceType(value) === SourceType.NotSupported) {
+    if (value && determineSourceType(value) === SourceType.notSupported) {
       input.validationMessage = notSupportedSourceErrorMessage;
     } else {
       input.validationMessage = undefined;
@@ -399,15 +399,15 @@ export async function openHandler(value: string, errorMessage?: string) {
   });
 
   input.onDidAccept(async () => {
-    if (!input.value) return;
+    if (!input.value) { return; }
 
     const sourceType = determineSourceType(input.value);
-    if (sourceType === SourceType.NotSupported) return;
+    if (sourceType === SourceType.notSupported) { return; }
 
     input.hide();
 
     const commit = await openDialogToGetCommitDetails(input.value, sourceType);
-    if (!commit) return;
+    if (!commit) { return; }
 
     downloadRepository(input.value, commit);
   });

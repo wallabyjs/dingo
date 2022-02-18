@@ -12,12 +12,12 @@ export interface PackageVersion {
 }
 
 export function getCurrentPackageVersion(rootPath: string | undefined, packageName: string): string {
-  if (!rootPath) return '';
+  if (!rootPath) { return ''; }
 
   const filePath = path.join(rootPath, 'node_modules', packageName, 'package.json');
   if (fs.existsSync(filePath)) {
     const pkg = jsonParse<{ version: string }>(fs.readFileSync(filePath).toString());
-    if (pkg === undefined) return '';
+    if (pkg === undefined) { return ''; }
     return pkg.version;
   }
 
@@ -33,7 +33,9 @@ function getVersionsFromTags(tags: Commit[]): Commit[] {
       return { major: major.replace('v', ''), minor, revision, ...item };
     })
     .filter((item) => item.major !== undefined && item.minor !== undefined && item.revision !== undefined)
+    // eslint-disable-next-line eqeqeq
     .filter((item) => (item.major as any == parseInt(item.major)) && 
+                      // eslint-disable-next-line eqeqeq
                       (item.minor as any == parseInt(item.minor)))
     .map((item) => ({
       ...item,
@@ -63,13 +65,13 @@ export function getPackageVersions(gitPath: string, packageName: string): Cancel
   let cancelled = false;
   let rawRegistryInfoPromise: CancellablePromise<{ stdout: string; stderr: string; returnCode: number }> | undefined = undefined;
   
-  const promise: any = new Promise(async (resolve, reject) => {
+  const promise = new Promise(async (resolve, reject) => {
     try {
       rawRegistryInfoPromise = executeCommand(`npm view ${packageName} repository --json`);
       const rawRegistryInfo = await rawRegistryInfoPromise;
       rawRegistryInfoPromise = undefined;
       
-      if (cancelled) reject(new Error('Cancelled'));
+      if (cancelled) { reject(new Error('Cancelled')); }
 
       const registryInfo = jsonParse<{ url: string; directory: string | undefined }>(rawRegistryInfo.stdout);
   
@@ -85,8 +87,8 @@ export function getPackageVersions(gitPath: string, packageName: string): Cancel
     }
   });
 
-  promise.cancel = () => {
-    if (cancelled) return;
+  (promise as CancellablePromise<Commit[]>).cancel = () => {
+    if (cancelled) { return; }
 
     cancelled = true;    
     if (rawRegistryInfoPromise) {
@@ -94,5 +96,5 @@ export function getPackageVersions(gitPath: string, packageName: string): Cancel
     }
   };
 
-  return promise;
+  return promise as CancellablePromise<Commit[]>;
 }

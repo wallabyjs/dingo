@@ -48,7 +48,7 @@ export function download(gitPath: string, commit: Commit, directory: string): Ca
   let cancelled = false;
   let waitingPromise: CancellablePromise<{ stdout: string; stderr: string; returnCode: number }> | undefined = undefined;
 
-  const promise: any = new Promise(async (resolve, reject) => {
+  const promise: any = new Promise<void>(async (resolve, reject) => {
     try {
       await rimrafPromise(directory, {});
 
@@ -58,32 +58,32 @@ export function download(gitPath: string, commit: Commit, directory: string): Ca
 
       waitingPromise = executeCommand(`${gitCommand} init`, { cwd: directory });
       await waitingPromise;
-      if (cancelled) reject(new Error('Cancelled'));
+      if (cancelled) { reject(new Error('Cancelled')); }
 
       waitingPromise = executeCommand(`${gitCommand} remote add origin ${commit.repoUrl}`, { cwd: directory });
       await waitingPromise;
-      if (cancelled) reject(new Error('Cancelled'));
+      if (cancelled) { reject(new Error('Cancelled')); }
 
       if (!commit.id) {
         waitingPromise = executeCommand(`${gitCommand} fetch --depth 1`, { cwd: directory });
         await waitingPromise;
-        if (cancelled) reject(new Error('Cancelled'));
+        if (cancelled) { reject(new Error('Cancelled')); }
 
         try {
           try {
             // Try master first
             waitingPromise = executeCommand(`${gitCommand} checkout master`, { cwd: directory });
             await waitingPromise;
-            if (cancelled) reject(new Error('Cancelled'));  
+            if (cancelled) { reject(new Error('Cancelled')); }
           } catch (e) {
             // If no master branch, try main
             waitingPromise = executeCommand(`${gitCommand} checkout main`, { cwd: directory });
             await waitingPromise;
-            if (cancelled) reject(new Error('Cancelled'));
+            if (cancelled) { reject(new Error('Cancelled')); }
           }
         } catch (e) {
           const branchesOrTags = await getBranchesOrTags(gitPath, commit.repoUrl, "Branches");
-          if (cancelled) reject(new Error('Cancelled'));
+          if (cancelled) { reject(new Error('Cancelled')); }
           if (branchesOrTags.length === 0) {
             throw new Error('No branches found in repository');
           } else if (branchesOrTags.length === 1) {
@@ -92,11 +92,11 @@ export function download(gitPath: string, commit: Commit, directory: string): Ca
             
             waitingPromise = executeCommand(`${gitCommand} fetch --depth 1 origin ` + singleBranchCommit.id!, { cwd: directory });
             await waitingPromise;
-            if (cancelled) reject(new Error('Cancelled'));
+            if (cancelled) { reject(new Error('Cancelled')); }
 
             waitingPromise = executeCommand(`${gitCommand} checkout ${singleBranchCommit.id!}`, { cwd: directory });
             await waitingPromise;
-            if (cancelled) reject(new Error('Cancelled'));
+            if (cancelled) { reject(new Error('Cancelled')); }
           } else {
             throw e;
           }
@@ -104,11 +104,11 @@ export function download(gitPath: string, commit: Commit, directory: string): Ca
       } else {
         waitingPromise = executeCommand(`${gitCommand} fetch --depth 1 origin ` + commit.id!, { cwd: directory });
         await waitingPromise;
-        if (cancelled) reject(new Error('Cancelled'));
+        if (cancelled) { reject(new Error('Cancelled')); }
 
         waitingPromise = executeCommand(`${gitCommand} checkout ${commit.id!}`, { cwd: directory });
         await waitingPromise;
-        if (cancelled) reject(new Error('Cancelled'));
+        if (cancelled) { reject(new Error('Cancelled')); }
       }
       resolve();
     } catch (e) {
@@ -117,7 +117,7 @@ export function download(gitPath: string, commit: Commit, directory: string): Ca
   });
 
   promise.cancel = () => {
-    if (cancelled) return;
+    if (cancelled) { return; }
     cancelled = true;
     if (waitingPromise) {
       waitingPromise.cancel();
@@ -131,7 +131,7 @@ export function getBranchesOrTags(gitPath: string, repoUrl: string, requestType:
   let cancelled = false;
   let remotePromise: CancellablePromise<{ stdout: string; stderr: string; returnCode: number }> | undefined = undefined;
 
-  const promise: any = new Promise(async (resolve, reject) => {
+  const promise = new Promise(async (resolve, reject) => {
     try {
       const parameter = requestType === 'Branches' ? '--heads' : '--tags';
 
@@ -165,13 +165,13 @@ export function getBranchesOrTags(gitPath: string, repoUrl: string, requestType:
     }
   });
 
-  promise.cancel = () => {
-    if (cancelled) return;
+  (promise as CancellablePromise<Commit[]>).cancel = () => {
+    if (cancelled) { return; }
     cancelled = true;
     if (remotePromise) {
       remotePromise.cancel();
     }
   };
 
-  return promise;
+  return promise as CancellablePromise<Commit[]>;
 }

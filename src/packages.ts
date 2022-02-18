@@ -8,7 +8,7 @@ export function installPackages(directory: string, npmPath: string, yarnPath: st
   let cancelled = false;
   let waitingPromise: CancellablePromise<{ stdout: string; stderr: string; returnCode: number }> | undefined = undefined;
 
-  const promise: any = new Promise(async (resolve, reject) => {
+  const promise = new Promise<void>(async (resolve, reject) => {
     try {
       const packageJson = path.join(directory, 'package.json');
       if (!fs.existsSync(packageJson)) {
@@ -21,7 +21,7 @@ export function installPackages(directory: string, npmPath: string, yarnPath: st
           await waitingPromise;
           waitingPromise = undefined;
         } catch (e) {
-          if (cancelled) throw new Error('Cancelled');
+          if (cancelled) { throw new Error('Cancelled'); }
           console.warn('Error running `npm install`', e);
           throw new Error('Error installing packages');
         }
@@ -35,7 +35,7 @@ export function installPackages(directory: string, npmPath: string, yarnPath: st
           await waitingPromise;
           waitingPromise = undefined;
         } catch (e) {
-          if (cancelled) throw new Error('Cancelled');
+          if (cancelled) { throw new Error('Cancelled'); }
           console.warn('Error running `yarn`', e);
           await npmInstall();
         }
@@ -48,13 +48,13 @@ export function installPackages(directory: string, npmPath: string, yarnPath: st
     }
   });
 
-  promise.cancel = () => {
-    if (cancelled) return;
+  (promise as CancellablePromise<void>).cancel = () => {
+    if (cancelled) { return; }
     cancelled = true;
     if (waitingPromise) {
       waitingPromise.cancel();
     }
   };
 
-  return promise;
+  return promise as CancellablePromise<void>;
 }
