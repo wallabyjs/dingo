@@ -21,6 +21,7 @@ export function installPackages(directory: string, npmPath: string, yarnPath: st
           await waitingPromise;
           waitingPromise = undefined;
         } catch (e) {
+          console.error(e);
           if (cancelled) { throw new Error('Cancelled'); }
           console.warn('Error running `npm install`', e);
           throw new Error('Error installing packages');
@@ -35,6 +36,7 @@ export function installPackages(directory: string, npmPath: string, yarnPath: st
           await waitingPromise;
           waitingPromise = undefined;
         } catch (e) {
+          console.error(e);
           if (cancelled) { throw new Error('Cancelled'); }
           console.warn('Error running `yarn`', e);
           await npmInstall();
@@ -44,6 +46,7 @@ export function installPackages(directory: string, npmPath: string, yarnPath: st
       }
       resolve();
     } catch (e) {
+      console.error(e);
       reject(e);
     }
   });

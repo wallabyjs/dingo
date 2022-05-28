@@ -76,12 +76,14 @@ export function download(gitPath: string, commit: Commit, directory: string): Ca
             await waitingPromise;
             if (cancelled) { reject(new Error('Cancelled')); }
           } catch (e) {
+            console.error(e);
             // If no master branch, try main
             waitingPromise = executeCommand(`${gitCommand} checkout main`, { cwd: directory });
             await waitingPromise;
             if (cancelled) { reject(new Error('Cancelled')); }
           }
         } catch (e) {
+          console.error(e);
           const branchesOrTags = await getBranchesOrTags(gitPath, commit.repoUrl, "Branches");
           if (cancelled) { reject(new Error('Cancelled')); }
           if (branchesOrTags.length === 0) {
@@ -112,6 +114,7 @@ export function download(gitPath: string, commit: Commit, directory: string): Ca
       }
       resolve();
     } catch (e) {
+      console.error(e);
       reject(e);
     }
   });
@@ -161,6 +164,7 @@ export function getBranchesOrTags(gitPath: string, repoUrl: string, requestType:
           .filter((item) => item.id !== undefined && item.label !== '')
       );
     } catch (e) {
+      console.error(e);
       reject(e);
     }
   });

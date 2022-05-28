@@ -246,6 +246,7 @@ async function showQuickPick(input: string, loadedValue: string, busyPlaceholder
         }
       }
     } catch (e:any) {
+      console.error(e);
       quickPick.hide();
       if (e.message) {
         openHandler(input, e.message);
@@ -361,6 +362,7 @@ async function downloadRepository(inputValue: string, commit: Commit) {
             }
           }
         } catch (e:any) {
+          console.error(e);
           if (!cancelled) {
             const timeSinceProgressStarted = new Date().getTime() - progressStartTime;
             if (timeSinceProgressStarted < 2500) {

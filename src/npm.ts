@@ -83,6 +83,7 @@ export function getPackageVersions(gitPath: string, packageName: string): Cancel
       const tags = await getBranchesOrTags(gitPath, normalizeRepositoryUrl(registryInfo.url), 'Tags');
       resolve(getVersionsFromTags(tags).map((item) => ({ ...item, directory: registryInfo.directory || '' })));
     } catch (e) {
+      console.error(e);
       reject(new Error('Error getting package versions.'));      
     }
   });
