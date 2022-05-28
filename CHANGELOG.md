@@ -2,6 +2,9 @@
 
 All notable changes to the "dingo-vscode" extension will be documented in this file.
 
+## 1.0.11
+- Improve error reporting (log to VS Code Developer Tool Console)
+
 ## 1.0.10
 - Update dependencies
 
