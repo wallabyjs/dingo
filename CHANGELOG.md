@@ -2,6 +2,10 @@
 
 All notable changes to the "dingo-vscode" extension will be documented in this file.
 
+## 1.0.12
+- Specify default download directory is os.tmpdir() in setting description. Fixes [#13](https://github.com/wallabyjs/dingo/issues/13)
+- Update dependencies
+
 ## 1.0.11
 - Improve error reporting (log to VS Code Developer Tool Console)
 
