@@ -1,8 +1,5 @@
 # Dingo Visual Studio Code Extension
 
-[![https://marketplace.visualstudio.com/items?itemName=WallabyJs.dingo-vscode](https://vsmarketplacebadge.apphb.com/version/WallabyJs.dingo-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=WallabyJs.dingo-vscode)
-[![](https://vsmarketplacebadge.apphb.com/installs-short/WallabyJs.dingo-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=WallabyJs.dingo-vscode.svg)
-
 ## Features
 
 This extension allows you to download and open a Git repository directly from VS Code.
